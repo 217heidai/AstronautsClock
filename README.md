@@ -27,7 +27,7 @@
 5. Buzzer
 
 ### 配置修改
-1. 修改TFT_eSPI库管脚定义：
+1. 修改 TFT_eSPI 库管脚定义：
 ```C
 #define TFT_MISO 14
 #define TFT_MOSI 13
