@@ -27,5 +27,14 @@
 5. Buzzer
 
 ### 配置修改
-1. `CLOCK.ino`中修改 WiFi 信息，设置 `ssid`、`password`;
-2. `CLOCK.ino`中修改天气城市代码，设置 `cityCode`。
+1. 修改TFT_eSPI库管脚定义：
+```C
+#define TFT_MISO 14
+#define TFT_MOSI 13
+#define TFT_CS   -1  // Chip select control pin D8
+#define TFT_DC    5  // Data Command control pin
+#define TFT_RST   4  // Reset pin (could connect to NodeMCU RST, see next line)
+#define TFT_BL   -1  // LED back-light (only for ST7789 with backlight control pin)
+```
+2. `CLOCK.ino`中修改 WiFi 信息，设置 `ssid`、`password`
+3. `CLOCK.ino`中修改天气城市代码，设置 `cityCode`
