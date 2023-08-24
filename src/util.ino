@@ -31,11 +31,24 @@ extern String hourMinute(void)
   return s;
 }
 
-//关闭显示
+#define TFT_COMMAND_HWRESET                      0x61  //tft command: HWRESET(61h): Hardeware Reset
+#define TFT_COMMAND_SWRESET                      0x01  //tft command: SWRESET(01h): Software Reset
 #define TFT_COMMAND_SLPIN                        0x10  //tft command: SLPIN(10h): Sleep In mode
 #define TFT_COMMAND_DLPOFFSAVE                   0xBD  //tft command: DLPOFFSAVE (BDh): Display off power save
 #define TFT_COMMANDDATA_DOFSAVE                  0x00  //tft command data: Power save for display off mode. When DOFSAVE=0, power consumption in display off mode will be saved.
 #define TFT_COMMAND_DELAY                          10  //delay 10ms for next command
+
+//打开显示
+static void tft_display_reset(void)
+{
+  tft.writecommand(TFT_COMMAND_HWRESET);//Hardeware Reset
+  delayMicroseconds(TFT_COMMAND_DELAY);
+
+  tft.writecommand(TFT_COMMAND_SWRESET);//Software Reset
+  delayMicroseconds(TFT_COMMAND_DELAY);
+}
+
+//关闭显示
 static void tft_display_off(void)
 {
   tft.writecommand(TFT_COMMAND_SLPIN); //tft 设置为 Sleep In mode
@@ -63,9 +76,11 @@ extern void sleep_at_night(unsigned char type) //夜间休眠, 0-自动，1-立�
   //立即休眠
   if (type == 1)
   {
+    Serial.println("need sleep");
     RTC_sleep_count_night = 1;
     ESP.rtcUserMemoryWrite(RTCdz_sleep_count_night, &RTC_sleep_count_night, sizeof(RTC_sleep_count_night));
     esp_sleep(SLEEP_TIME_NIGHT);
+    return;
   }
 
   //自动判断是否休眠
@@ -73,8 +88,14 @@ extern void sleep_at_night(unsigned char type) //夜间休眠, 0-自动，1-立�
   Serial.printf("RTC_sleep_count_night: %d\n", RTC_sleep_count_night);
   if (RTC_sleep_count_night < SLEEP_COUNT_NIGHT_MAX) // 继续休眠
   {
+    Serial.println("auto sleep");
     RTC_sleep_count_night++;
     ESP.rtcUserMemoryWrite(RTCdz_sleep_count_night, &RTC_sleep_count_night, sizeof(RTC_sleep_count_night));
     esp_sleep(SLEEP_TIME_NIGHT);
+    return;
   }
+
+  Serial.println("weak up");
+  //不休眠则点亮屏幕
+  tft_display_reset();
 }

@@ -6,6 +6,7 @@
  * 屏幕使用的中景园1.3寸240分辨率全彩屏幕，7、8、10针脚的屏应该都可以，具体请自己参考引脚定义
  * 
  */
+#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <TimeLib.h>
 #include <ESP8266WiFi.h>
@@ -21,17 +22,7 @@
 #include "font/ZdyLwFont_20.h"
 #include "font/FxLED_32.h"
 
-#include "img/pangzi/i0.h"
-#include "img/pangzi/i1.h"
-#include "img/pangzi/i2.h"
-#include "img/pangzi/i3.h"
-#include "img/pangzi/i4.h"
-#include "img/pangzi/i5.h"
-#include "img/pangzi/i6.h"
-#include "img/pangzi/i7.h"
-#include "img/pangzi/i8.h"
-#include "img/pangzi/i9.h"
-
+#include "img/gif.h"
 #include "img/temperature.h"
 #include "img/humidity.h"
 #include "img/watch_top.h"
@@ -48,7 +39,7 @@ String cityCode = "101020100"; //天气城市代码，上海
 #define SLEEP_COUNT_NIGHT_MAX        12    //需要跳过几次，20-8点不更新
 #define SLEEP_TIME_START             20    //20点开始休眠
 #define SLEEP_TIME_NIGHT             60    //夜间休眠60min
-#define SLEEP_TIME_DAY                5    //白天休眠5min
+#define SLEEP_TIME_DAY               10    //白天休眠10min
 
 TFT_eSPI tft = TFT_eSPI(); // 引脚请自行配置tft_espi库中的 User_Setup.h文件
 TFT_eSprite clk = TFT_eSprite(&tft);
@@ -64,12 +55,13 @@ bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap)
 void setup()
 {
   Serial.begin(115200);
-
   ESP.wdtFeed(); //喂狗
 
-  //sleep_at_night(0); //夜间自动休眠
+#if 0 //不休眠
+  sleep_at_night(0); //自动休眠检查
+#endif
 
-  //tft_init(); //屏幕初始化
+  //屏幕初始化
   tft.begin();
   tft.setRotation(1);
   tft.setTextColor(TFT_BLACK, TFT_WHITE);
@@ -99,32 +91,33 @@ time_t banner_old = 0; //上次banner刷新时间
 time_t time_now = 0; //当前秒
 time_t hour_old = 0;
 time_t hour_now = 0;
+bool isChangeMode = false;
+
 void loop()
 {
-  //static time_t time_old = 0; //上次时间刷新时间
-  //static time_t weater_old = 0; //上次天气获取时间
-  //static time_t banner_old = 0; //上次banner刷新时间
-  //static time_t time_now = now(); //当前秒
   time_now = now();
   hour_now = hour();
+
   //刷新时间信息，每秒刷新
   if (time_now != time_old)
   {
     time_old = time_now;
     tft_display_time();
 
-    //Serial.printf("\nhour_old = %d, hour_now = %d\n", hour_old, hour_now);
     //整点报时
     if(hour_now != hour_old)
     {
       hour_old = hour_now;
+      isChangeMode = true;
       Beep(2);
-
-      //if(hour_now >= SLEEP_TIME_START) //夜间休眠
-      //{
-      //  sleep_at_night(1);//立即休眠
-      //}
+#if 0 //不休眠
+      if(hour_now >= SLEEP_TIME_START) //夜间休眠
+      {
+        sleep_at_night(1);//立即休眠
+      }
+#endif
     }
+    //isChangeMode = true;//测试gif
   }
 
   //刷新天气信息，每30分钟刷新
@@ -142,6 +135,8 @@ void loop()
     tft_display_banner();
   }
 
-  //刷新太空人图片
-  tft_display_spaceman();
+  //刷新gif
+  tft_display_gif(isChangeMode);
+
+  if(isChangeMode) isChangeMode=false;
 }

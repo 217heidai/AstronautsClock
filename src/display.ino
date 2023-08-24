@@ -1,5 +1,5 @@
 //初始化屏幕
-extern bool tft_init(void)
+extern void tft_init(void)
 {
   tft.begin();
   tft.setRotation(0);
@@ -17,12 +17,12 @@ extern void tft_display_loading(byte delayTime)
 {
   clk.setColorDepth(8);
   clk.createSprite(200, 50);
-  clk.fillSprite(0x0000);
+  clk.fillSprite(TFT_BLACK);
 
-  clk.drawRoundRect(0, 0, 200, 16, 8, 0xFFFF);
-  clk.fillRoundRect(3, 3, loadNum, 10, 5, 0xFFFF);
+  clk.drawRoundRect(0, 0, 200, 16, 8, TFT_WHITE);
+  clk.fillRoundRect(3, 3, loadNum, 10, 5, TFT_WHITE);
   clk.setTextDatum(CC_DATUM);
-  clk.setTextColor(TFT_GREEN, 0x0000);
+  clk.setTextColor(TFT_GREEN, TFT_BLACK);
   clk.drawString("Connecting to WiFi", 100, 40, 2);
   clk.pushSprite(20, 110);
   clk.deleteSprite();
@@ -47,26 +47,26 @@ extern void tft_display_loading_complete(void)
 extern void tft_display_layout(void)
 {
   //绘制顶部视图
-  TJpgDec.drawJpg(0, 0, watchtop, sizeof(watchtop));
+  //TJpgDec.drawJpg(0, 0, watchtop, sizeof(watchtop));
 
   //绘制底部视图
-  TJpgDec.drawJpg(0, 220, watchbottom, sizeof(watchbottom));
+  //TJpgDec.drawJpg(0, 220, watchbottom, sizeof(watchbottom));
 
   //绘制中间显示窗口
-  tft.setViewport(0, 20, 240, 200);
-  tft.fillScreen(0x0000);
-  tft.fillRoundRect(0, 0, 240, 200, 5, TFT_WHITE); //实心圆角矩形
+  tft.setViewport(0, 0, 240, 240);
+  tft.fillScreen(TFT_BLACK);
+  tft.fillRoundRect(0, 0, 240, 240, 7, TFT_WHITE); //实心圆角矩形
 
   //在窗口内绘制线框
   tft.drawFastHLine(0, 34, 240, TFT_BLACK);
   tft.drawFastVLine(150, 0, 34, TFT_BLACK);
-  tft.drawFastHLine(0, 166, 240, TFT_BLACK);
-  tft.drawFastVLine(60, 166, 34, TFT_BLACK);
-  tft.drawFastVLine(160, 166, 34, TFT_BLACK);
+  tft.drawFastHLine(0, 206, 240, TFT_BLACK);
+  tft.drawFastVLine(60, 206, 34, TFT_BLACK);
+  tft.drawFastVLine(160, 206, 34, TFT_BLACK);
 
   //在窗口内绘制图标
-  TJpgDec.drawJpg(159, 130, humidity, sizeof(humidity));       //湿度图标
-  TJpgDec.drawJpg(161, 171, temperature, sizeof(temperature)); //温度图标
+  TJpgDec.drawJpg(162, 150, humidity, sizeof(humidity));       //湿度图标
+  TJpgDec.drawJpg(163, 210, temperature, sizeof(temperature)); //温度图标
 }
 
 //刷新时间显示
@@ -123,54 +123,206 @@ extern void tft_display_time(void)
   if(week_now != week_old)
   {
     week_old = week_now;
-    clk.createSprite(58, 32);
+    clk.createSprite(56, 30);
     clk.fillSprite(TFT_WHITE);
     clk.setTextDatum(CC_DATUM);
     clk.setTextColor(TFT_BLACK, TFT_WHITE);
-    clk.drawString(week_now, 29, 16);
-    clk.pushSprite(1, 168);
+    clk.drawString(week_now, 28, 15);
+    clk.pushSprite(2, 208);
     clk.deleteSprite();
   }
   //月日
   if(monthDay_now != monthDay_old)
   {
     monthDay_old = monthDay_now;
-    clk.createSprite(98, 32);
+    clk.createSprite(98, 30);
     clk.fillSprite(TFT_WHITE);
     clk.setTextDatum(CC_DATUM);
     clk.setTextColor(TFT_BLACK, TFT_WHITE);
-    clk.drawString(monthDay_now, 49, 16);
-    clk.pushSprite(61, 168);
+    clk.drawString(monthDay_now, 49, 15);
+    clk.pushSprite(61, 208);
     clk.deleteSprite();
   }
   clk.unloadFont();
 }
 
-//刷新太空人图片
-void tft_display_spaceman(void)
+//刷新gif
+extern void tft_display_gif(bool isChangeMode)
 {
-  int x = 80, y = 94, dt = 30; //瘦子版dt=10毫秒 胖子30较为合适
+  static uint8_t mode = 0;
+  static uint8_t index = 0;
+  static uint32_t time_old = 0;
+  uint8_t x,y,dt;
+  uint32_t time_now = 0;
 
-  TJpgDec.drawJpg(x, y, i0, sizeof(i0));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i1, sizeof(i1));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i2, sizeof(i2));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i3, sizeof(i3));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i4, sizeof(i4));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i5, sizeof(i5));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i6, sizeof(i6));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i7, sizeof(i7));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i8, sizeof(i8));
-  delay(dt);
-  TJpgDec.drawJpg(x, y, i9, sizeof(i9));
-  delay(dt);
+  if(isChangeMode)
+  {
+    mode += 1;
+    if(mode > 3) mode=1;
+    index = 0;
+    time_old = 0;
+  }
+
+  //修改动画的播放速度
+  switch(mode) {
+    case 1:x=80;y=104;dt=40;break;  //动画-龙猫跳绳
+    case 2:x=80;y=114;dt=50;break;  //动画-龙猫转圈
+    case 3:x=83;y=114;dt=30;break;  //动画-太空人(胖)
+  }
+
+  time_now = millis();
+  if(time_now - time_old >= dt) 
+  {
+    index += 1;
+    time_old = time_now;
+  }
+  if(mode == 1) { //动画-龙猫跳绳
+    switch(index) {
+      case 1:  TJpgDec.drawJpg(x,y,chinchilla_1_0, sizeof(chinchilla_1_0));break;
+      case 2:  TJpgDec.drawJpg(x,y,chinchilla_1_1, sizeof(chinchilla_1_1));break;
+      case 3:  TJpgDec.drawJpg(x,y,chinchilla_1_2, sizeof(chinchilla_1_2));break;
+      case 4:  TJpgDec.drawJpg(x,y,chinchilla_1_3, sizeof(chinchilla_1_3));break;
+      case 5:  TJpgDec.drawJpg(x,y,chinchilla_1_4, sizeof(chinchilla_1_4));break;
+      case 6:  TJpgDec.drawJpg(x,y,chinchilla_1_5, sizeof(chinchilla_1_5));break;
+      case 7:  TJpgDec.drawJpg(x,y,chinchilla_1_6, sizeof(chinchilla_1_6));break;
+      case 8:  TJpgDec.drawJpg(x,y,chinchilla_1_7, sizeof(chinchilla_1_7));break;
+      case 9:  TJpgDec.drawJpg(x,y,chinchilla_1_8, sizeof(chinchilla_1_8));break;
+      case 10: TJpgDec.drawJpg(x,y,chinchilla_1_9, sizeof(chinchilla_1_9));break;
+      case 11: TJpgDec.drawJpg(x,y,chinchilla_1_10, sizeof(chinchilla_1_10));break;
+      case 12: TJpgDec.drawJpg(x,y,chinchilla_1_11, sizeof(chinchilla_1_11));break;
+      case 13: TJpgDec.drawJpg(x,y,chinchilla_1_12, sizeof(chinchilla_1_12));break;
+      case 14: TJpgDec.drawJpg(x,y,chinchilla_1_13, sizeof(chinchilla_1_13));break;
+      case 15: TJpgDec.drawJpg(x,y,chinchilla_1_14, sizeof(chinchilla_1_14));break;
+      case 16: TJpgDec.drawJpg(x,y,chinchilla_1_15, sizeof(chinchilla_1_15));break;
+      case 17: TJpgDec.drawJpg(x,y,chinchilla_1_16, sizeof(chinchilla_1_16));break;
+      case 18: TJpgDec.drawJpg(x,y,chinchilla_1_17, sizeof(chinchilla_1_17));break;
+      case 19: TJpgDec.drawJpg(x,y,chinchilla_1_18, sizeof(chinchilla_1_18));break;
+      case 20: TJpgDec.drawJpg(x,y,chinchilla_1_19, sizeof(chinchilla_1_19));break;
+      case 21: TJpgDec.drawJpg(x,y,chinchilla_1_20, sizeof(chinchilla_1_20));break;
+      case 22: TJpgDec.drawJpg(x,y,chinchilla_1_21, sizeof(chinchilla_1_21));break;
+      case 23: TJpgDec.drawJpg(x,y,chinchilla_1_22, sizeof(chinchilla_1_22));break;
+      case 24: TJpgDec.drawJpg(x,y,chinchilla_1_23, sizeof(chinchilla_1_23));break;
+      case 25: TJpgDec.drawJpg(x,y,chinchilla_1_24, sizeof(chinchilla_1_24));break;
+      case 26: TJpgDec.drawJpg(x,y,chinchilla_1_25, sizeof(chinchilla_1_25));break;
+      case 27: TJpgDec.drawJpg(x,y,chinchilla_1_26, sizeof(chinchilla_1_26));break;
+      case 28: TJpgDec.drawJpg(x,y,chinchilla_1_27, sizeof(chinchilla_1_27));break;
+      case 29: TJpgDec.drawJpg(x,y,chinchilla_1_28, sizeof(chinchilla_1_28));break;
+      case 30: TJpgDec.drawJpg(x,y,chinchilla_1_29, sizeof(chinchilla_1_29));break;
+      case 31: TJpgDec.drawJpg(x,y,chinchilla_1_30, sizeof(chinchilla_1_30));break;
+      case 32: TJpgDec.drawJpg(x,y,chinchilla_1_31, sizeof(chinchilla_1_31));break;
+      case 33: TJpgDec.drawJpg(x,y,chinchilla_1_32, sizeof(chinchilla_1_32));break;
+      case 34: TJpgDec.drawJpg(x,y,chinchilla_1_33, sizeof(chinchilla_1_33));break;
+      case 35: TJpgDec.drawJpg(x,y,chinchilla_1_34, sizeof(chinchilla_1_34));break;
+      case 36: TJpgDec.drawJpg(x,y,chinchilla_1_35, sizeof(chinchilla_1_35));break;
+      case 37: TJpgDec.drawJpg(x,y,chinchilla_1_36, sizeof(chinchilla_1_36));break;
+      case 38: TJpgDec.drawJpg(x,y,chinchilla_1_37, sizeof(chinchilla_1_37));break;
+      case 39: TJpgDec.drawJpg(x,y,chinchilla_1_38, sizeof(chinchilla_1_38));break;
+      case 40: TJpgDec.drawJpg(x,y,chinchilla_1_39, sizeof(chinchilla_1_39));index=0;break;
+    }
+  }
+  else if(mode == 2) { //动画-龙猫转圈
+    switch(index) {
+      case 1:  TJpgDec.drawJpg(x,y,chinchilla_2_0, sizeof(chinchilla_2_0));break;
+      case 2:  TJpgDec.drawJpg(x,y,chinchilla_2_1, sizeof(chinchilla_2_1));break;
+      case 3:  TJpgDec.drawJpg(x,y,chinchilla_2_2, sizeof(chinchilla_2_2));break;
+      case 4:  TJpgDec.drawJpg(x,y,chinchilla_2_3, sizeof(chinchilla_2_3));break;
+      case 5:  TJpgDec.drawJpg(x,y,chinchilla_2_4, sizeof(chinchilla_2_4));break;
+      case 6:  TJpgDec.drawJpg(x,y,chinchilla_2_5, sizeof(chinchilla_2_5));break;
+      case 7:  TJpgDec.drawJpg(x,y,chinchilla_2_6, sizeof(chinchilla_2_6));break;
+      case 8:  TJpgDec.drawJpg(x,y,chinchilla_2_7, sizeof(chinchilla_2_7));break;
+      case 9:  TJpgDec.drawJpg(x,y,chinchilla_2_8, sizeof(chinchilla_2_8));break;
+      case 10: TJpgDec.drawJpg(x,y,chinchilla_2_9, sizeof(chinchilla_2_9));break;
+      case 11: TJpgDec.drawJpg(x,y,chinchilla_2_10, sizeof(chinchilla_2_10));break;
+      case 12: TJpgDec.drawJpg(x,y,chinchilla_2_11, sizeof(chinchilla_2_11));break;
+      case 13: TJpgDec.drawJpg(x,y,chinchilla_2_12, sizeof(chinchilla_2_12));break;
+      case 14: TJpgDec.drawJpg(x,y,chinchilla_2_13, sizeof(chinchilla_2_13));break;
+      case 15: TJpgDec.drawJpg(x,y,chinchilla_2_14, sizeof(chinchilla_2_14));break;
+      case 16: TJpgDec.drawJpg(x,y,chinchilla_2_15, sizeof(chinchilla_2_15));break;
+      case 17: TJpgDec.drawJpg(x,y,chinchilla_2_16, sizeof(chinchilla_2_16));break;
+      case 18: TJpgDec.drawJpg(x,y,chinchilla_2_17, sizeof(chinchilla_2_17));break;
+      case 19: TJpgDec.drawJpg(x,y,chinchilla_2_18, sizeof(chinchilla_2_18));break;
+      case 20: TJpgDec.drawJpg(x,y,chinchilla_2_19, sizeof(chinchilla_2_19));break;
+      case 21: TJpgDec.drawJpg(x,y,chinchilla_2_20, sizeof(chinchilla_2_20));break;
+      case 22: TJpgDec.drawJpg(x,y,chinchilla_2_21, sizeof(chinchilla_2_21));break;
+      case 23: TJpgDec.drawJpg(x,y,chinchilla_2_22, sizeof(chinchilla_2_22));break;
+      case 24: TJpgDec.drawJpg(x,y,chinchilla_2_23, sizeof(chinchilla_2_23));break;
+      case 25: TJpgDec.drawJpg(x,y,chinchilla_2_24, sizeof(chinchilla_2_24));break;
+      case 26: TJpgDec.drawJpg(x,y,chinchilla_2_25, sizeof(chinchilla_2_25));break;
+      case 27: TJpgDec.drawJpg(x,y,chinchilla_2_26, sizeof(chinchilla_2_26));break;
+      case 28: TJpgDec.drawJpg(x,y,chinchilla_2_27, sizeof(chinchilla_2_27));break;
+      case 29: TJpgDec.drawJpg(x,y,chinchilla_2_28, sizeof(chinchilla_2_28));break;
+      case 30: TJpgDec.drawJpg(x,y,chinchilla_2_29, sizeof(chinchilla_2_29));break;
+      case 31: TJpgDec.drawJpg(x,y,chinchilla_2_30, sizeof(chinchilla_2_30));break;
+      case 32: TJpgDec.drawJpg(x,y,chinchilla_2_31, sizeof(chinchilla_2_31));break;
+      case 33: TJpgDec.drawJpg(x,y,chinchilla_2_32, sizeof(chinchilla_2_32));break;
+      case 34: TJpgDec.drawJpg(x,y,chinchilla_2_33, sizeof(chinchilla_2_33));break;
+      case 35: TJpgDec.drawJpg(x,y,chinchilla_2_34, sizeof(chinchilla_2_34));break;
+      case 36: TJpgDec.drawJpg(x,y,chinchilla_2_35, sizeof(chinchilla_2_35));break;
+      case 37: TJpgDec.drawJpg(x,y,chinchilla_2_36, sizeof(chinchilla_2_36));break;
+      case 38: TJpgDec.drawJpg(x,y,chinchilla_2_37, sizeof(chinchilla_2_37));break;
+      case 39: TJpgDec.drawJpg(x,y,chinchilla_2_38, sizeof(chinchilla_2_38));break;
+      case 40: TJpgDec.drawJpg(x,y,chinchilla_2_39, sizeof(chinchilla_2_39));break;
+      case 41: TJpgDec.drawJpg(x,y,chinchilla_2_40, sizeof(chinchilla_2_40));break;
+      case 42: TJpgDec.drawJpg(x,y,chinchilla_2_41, sizeof(chinchilla_2_41));break;
+      case 43: TJpgDec.drawJpg(x,y,chinchilla_2_42, sizeof(chinchilla_2_42));break;
+      case 44: TJpgDec.drawJpg(x,y,chinchilla_2_43, sizeof(chinchilla_2_43));break;
+      case 45: TJpgDec.drawJpg(x,y,chinchilla_2_44, sizeof(chinchilla_2_44));break;
+      case 46: TJpgDec.drawJpg(x,y,chinchilla_2_45, sizeof(chinchilla_2_45));break;
+      case 47: TJpgDec.drawJpg(x,y,chinchilla_2_46, sizeof(chinchilla_2_46));break;
+      case 48: TJpgDec.drawJpg(x,y,chinchilla_2_47, sizeof(chinchilla_2_47));break;
+      case 49: TJpgDec.drawJpg(x,y,chinchilla_2_48, sizeof(chinchilla_2_48));break;
+      case 50: TJpgDec.drawJpg(x,y,chinchilla_2_49, sizeof(chinchilla_2_49));break;
+      case 51: TJpgDec.drawJpg(x,y,chinchilla_2_50, sizeof(chinchilla_2_50));break;
+      case 52: TJpgDec.drawJpg(x,y,chinchilla_2_51, sizeof(chinchilla_2_51));break;
+      case 53: TJpgDec.drawJpg(x,y,chinchilla_2_52, sizeof(chinchilla_2_52));break;
+      case 54: TJpgDec.drawJpg(x,y,chinchilla_2_53, sizeof(chinchilla_2_53));break;
+      case 55: TJpgDec.drawJpg(x,y,chinchilla_2_54, sizeof(chinchilla_2_54));break;
+      case 56: TJpgDec.drawJpg(x,y,chinchilla_2_55, sizeof(chinchilla_2_55));break;
+      case 57: TJpgDec.drawJpg(x,y,chinchilla_2_56, sizeof(chinchilla_2_56));break;
+      case 58: TJpgDec.drawJpg(x,y,chinchilla_2_57, sizeof(chinchilla_2_57));break;
+      case 59: TJpgDec.drawJpg(x,y,chinchilla_2_58, sizeof(chinchilla_2_58));break;
+      case 60: TJpgDec.drawJpg(x,y,chinchilla_2_59, sizeof(chinchilla_2_59));break;
+      case 61: TJpgDec.drawJpg(x,y,chinchilla_2_60, sizeof(chinchilla_2_60));break;
+      case 62: TJpgDec.drawJpg(x,y,chinchilla_2_61, sizeof(chinchilla_2_61));break;
+      case 63: TJpgDec.drawJpg(x,y,chinchilla_2_62, sizeof(chinchilla_2_62));break;
+      case 64: TJpgDec.drawJpg(x,y,chinchilla_2_63, sizeof(chinchilla_2_63));break;
+      case 65: TJpgDec.drawJpg(x,y,chinchilla_2_64, sizeof(chinchilla_2_64));break;
+      case 66: TJpgDec.drawJpg(x,y,chinchilla_2_65, sizeof(chinchilla_2_65));break;
+      case 67: TJpgDec.drawJpg(x,y,chinchilla_2_66, sizeof(chinchilla_2_66));break;
+      case 68: TJpgDec.drawJpg(x,y,chinchilla_2_67, sizeof(chinchilla_2_67));break;
+      case 69: TJpgDec.drawJpg(x,y,chinchilla_2_68, sizeof(chinchilla_2_68));break;
+      case 70: TJpgDec.drawJpg(x,y,chinchilla_2_69, sizeof(chinchilla_2_69));break;
+      case 71: TJpgDec.drawJpg(x,y,chinchilla_2_70, sizeof(chinchilla_2_70));break;
+      case 72: TJpgDec.drawJpg(x,y,chinchilla_2_71, sizeof(chinchilla_2_71));break;
+      case 73: TJpgDec.drawJpg(x,y,chinchilla_2_72, sizeof(chinchilla_2_72));break;
+      case 74: TJpgDec.drawJpg(x,y,chinchilla_2_73, sizeof(chinchilla_2_73));break;
+      case 75: TJpgDec.drawJpg(x,y,chinchilla_2_74, sizeof(chinchilla_2_74));break;
+      case 76: TJpgDec.drawJpg(x,y,chinchilla_2_75, sizeof(chinchilla_2_75));break;
+      case 77: TJpgDec.drawJpg(x,y,chinchilla_2_76, sizeof(chinchilla_2_76));break;
+      case 78: TJpgDec.drawJpg(x,y,chinchilla_2_77, sizeof(chinchilla_2_77));break;
+      case 79: TJpgDec.drawJpg(x,y,chinchilla_2_78, sizeof(chinchilla_2_78));break;
+      case 80: TJpgDec.drawJpg(x,y,chinchilla_2_79, sizeof(chinchilla_2_79));index=0;break;
+    }
+  }
+  else if(mode == 3) { //动画-太空人
+    switch(index) {
+      case 1:  TJpgDec.drawJpg(x,y,Astronaut_1_0, sizeof(Astronaut_1_0));break;
+      case 2:  TJpgDec.drawJpg(x,y,Astronaut_1_1, sizeof(Astronaut_1_1));break;
+      case 3:  TJpgDec.drawJpg(x,y,Astronaut_1_2, sizeof(Astronaut_1_2));break;
+      case 4:  TJpgDec.drawJpg(x,y,Astronaut_1_3, sizeof(Astronaut_1_3));break;
+      case 5:  TJpgDec.drawJpg(x,y,Astronaut_1_4, sizeof(Astronaut_1_4));break;
+      case 6:  TJpgDec.drawJpg(x,y,Astronaut_1_5, sizeof(Astronaut_1_5));break;
+      case 7:  TJpgDec.drawJpg(x,y,Astronaut_1_6, sizeof(Astronaut_1_6));break;
+      case 8:  TJpgDec.drawJpg(x,y,Astronaut_1_7, sizeof(Astronaut_1_7));break;
+      case 9:  TJpgDec.drawJpg(x,y,Astronaut_1_8, sizeof(Astronaut_1_8));break;
+      case 10: TJpgDec.drawJpg(x,y,Astronaut_1_9, sizeof(Astronaut_1_9));index=0;break;
+    }
+  }
+  else{
+    mode = 0;
+    index = 0;
+    time_old = 0;
+  }
 }
 
 String scrollText[6];
@@ -189,20 +341,20 @@ extern void tft_display_weather(String *cityDZ, String *dataSK, String *dataFC)
   clk.loadFont(ZdyLwFont_20);
 
   //温度
-  clk.createSprite(54, 32);
+  clk.createSprite(52, 30);
   clk.fillSprite(TFT_WHITE);
   clk.setTextDatum(CC_DATUM);
   clk.setTextColor(TFT_BLACK, TFT_WHITE);
-  clk.drawString(sk["temp"].as<String>() + "℃", 27, 16);
-  clk.pushSprite(185, 168);
+  clk.drawString(sk["temp"].as<String>() + "℃", 26, 15);
+  clk.pushSprite(184, 208);
   clk.deleteSprite();
 
   //城市名称
-  clk.createSprite(88, 32);
+  clk.createSprite(84, 30);
   clk.fillSprite(TFT_WHITE);
   clk.setTextDatum(CC_DATUM);
   clk.setTextColor(TFT_BLACK, TFT_WHITE);
-  clk.drawString(sk["cityname"].as<String>(), 44, 16);
+  clk.drawString(sk["cityname"].as<String>(), 42, 15);
   clk.pushSprite(151, 1);
   clk.deleteSprite();
 
@@ -234,9 +386,9 @@ extern void tft_display_weather(String *cityDZ, String *dataSK, String *dataFC)
   clk.fillSprite(TFT_WHITE);
   clk.fillRoundRect(0, 0, 50, 24, 4, pm25TFT_WHITE);
   clk.setTextDatum(CC_DATUM);
-  clk.setTextColor(0xFFFF);
+  clk.setTextColor(TFT_WHITE);
   clk.drawString(aqiTxt, 25, 13);
-  clk.pushSprite(5, 130);
+  clk.pushSprite(5, 150);
   clk.deleteSprite();
 
   //湿度
@@ -246,7 +398,7 @@ extern void tft_display_weather(String *cityDZ, String *dataSK, String *dataFC)
   clk.setTextColor(TFT_BLACK, TFT_WHITE);
   clk.drawString(sk["SD"].as<String>(), 28, 13);
   //clk.drawString("100%",28,13);
-  clk.pushSprite(180, 130);
+  clk.pushSprite(185, 150);
   clk.deleteSprite();
 
   scrollText[0] = "实时天气 " + sk["weather"].as<String>();

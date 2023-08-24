@@ -8,6 +8,7 @@
 1. 时间、日期、星期，每 1 小时校准一次
 2. 实时天气信息：天气、温度、湿度、空气质量，每半小时刷新一次
 3. 整点蜂鸣报时
+4. 整点更换 gif（龙猫跳绳、龙猫跳舞、太空人）
 
 ## 材料清单
 1. ESP8266 开发板
@@ -27,7 +28,7 @@
 5. Buzzer
 
 ### 配置修改
-1. 修改 TFT_eSPI 库管脚定义：
+1. 修改 TFT_eSPI 库管脚定义，参考 [User_Setup.h.backup](https://ghproxy.com/https://raw.githubusercontent.com/217heidai/AstronautsClock/main/src/User_Setup.h.backup)：
 ```C
 #define TFT_MISO 14
 #define TFT_MOSI 13
