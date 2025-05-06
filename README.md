@@ -2,7 +2,7 @@
 基于 ESP8266 及 1.3 寸 TFT 实现的华为太空人时钟。参考了 d88880(抖音号) 的简易太空人时钟代码。
 
 ## 展示
-![AstronautsClock](https://ghproxy.com/https://raw.githubusercontent.com/217heidai/AstronautsClock/main/doc/AstronautsClock.jpeg)
+![AstronautsClock](doc/AstronautsClock.jpeg)
 
 ## 功能
 1. 时间、日期、星期，每 1 小时校准一次
@@ -17,7 +17,7 @@
 4. 微积木
 
 ## 电路图
-![tft](https://ghproxy.com/https://raw.githubusercontent.com/217heidai/AstronautsClock/main/doc/TFT.png)
+![tft](doc/TFT.png)
 
 ## 代码编译说明
 ### 依赖库
@@ -28,7 +28,7 @@
 5. Buzzer
 
 ### 配置修改
-1. 修改 TFT_eSPI 库管脚定义，参考 [User_Setup.h.backup](https://ghproxy.com/https://raw.githubusercontent.com/217heidai/AstronautsClock/main/src/User_Setup.h.backup)：
+1. 修改 TFT_eSPI 库管脚定义，参考 [User_Setup.h.backup](https://raw.githubusercontent.com/217heidai/AstronautsClock/main/src/User_Setup.h.backup)：
 ```C
 #define TFT_MISO 14
 #define TFT_MOSI 13
